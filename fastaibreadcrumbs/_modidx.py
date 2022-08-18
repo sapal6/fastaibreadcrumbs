@@ -41,5 +41,7 @@ d = { 'settings': { 'allowed_cell_metadata_keys': '',
                                         'fastaibreadcrumbs.core.get_ft_model': 'https://sapal6.github.io/fastaibreadcrumbs/core.html#get_ft_model',
                                         'fastaibreadcrumbs.core.get_unet_dls': 'https://sapal6.github.io/fastaibreadcrumbs/core.html#get_unet_dls',
                                         'fastaibreadcrumbs.core.gram_matrix': 'https://sapal6.github.io/fastaibreadcrumbs/core.html#gram_matrix',
+                                        'fastaibreadcrumbs.core.non_competition_nb_meta': 'https://sapal6.github.io/fastaibreadcrumbs/core.html#non_competition_nb_meta',
                                         'fastaibreadcrumbs.core.pixel_loss': 'https://sapal6.github.io/fastaibreadcrumbs/core.html#pixel_loss',
+                                        'fastaibreadcrumbs.core.push_non_competition_notebook': 'https://sapal6.github.io/fastaibreadcrumbs/core.html#push_non_competition_notebook',
                                         'fastaibreadcrumbs.core.setup_data': 'https://sapal6.github.io/fastaibreadcrumbs/core.html#setup_data'}}}
