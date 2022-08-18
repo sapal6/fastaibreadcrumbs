@@ -125,7 +125,7 @@ def calc_ft_loss(pretrained=True):
     blocks = [i-1 for i,o in enumerate(ft_model.children()) if isinstance(o,nn.MaxPool2d)]
     return FeatureLoss(ft_model, blocks[2:5], [5,15,2])
 
-# %% ../00_core.ipynb 32
+# %% ../00_core.ipynb 31
 def non_competition_nb_meta(user, id, title, file, dataset=None, private=True, gpu=False, internet=True):
     "Get the `dict` required for a kernel-metadata.json file"
     d = {
@@ -144,7 +144,7 @@ def non_competition_nb_meta(user, id, title, file, dataset=None, private=True, g
     if dataset: d["dataset_sources"] = [f"{user}/{dataset}"]
     return d
 
-# %% ../00_core.ipynb 35
+# %% ../00_core.ipynb 34
 def push_non_competition_notebook(user, id, title, file, path='.', dataset=None, private=True, gpu=False, internet=True):
     "Push notebook `file` to Kaggle Notebooks"
     meta = non_competition_nb_meta(user, id, title, file=file, dataset=dataset, private=private, gpu=gpu, internet=internet)
