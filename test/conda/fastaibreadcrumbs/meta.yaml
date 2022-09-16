@@ -1,0 +1,40 @@
+package:
+  name: fastaibreadcrumbs
+  version: 0.0.9
+source:
+  sha256: 67a8dcf88148d8b9977d5f17701dcb898695309d09ed87b0e8ef32fb6deb72c5
+  url: https://files.pythonhosted.org/packages/1b/c4/94a848fa6ae8bd533daa33ca7cfa03534af093596ff80210b6e9673c28fb/fastaibreadcrumbs-0.0.9.tar.gz
+about:
+  dev_url: https://sapal6.github.io
+  doc_url: https://sapal6.github.io
+  home: https://sapal6.github.io
+  license: Apache Software
+  license_family: APACHE
+  summary: Breadcrumbs for fastai users
+build:
+  noarch: python
+  number: '0'
+  script: '{{ PYTHON }} -m pip install . -vv'
+extra:
+  recipe-maintainers:
+  - sapal6
+requirements:
+  host:
+  - pip
+  - python
+  - packaging
+  - fastai
+  - opencv-python
+  - torchvision
+  - fastkaggle
+  run:
+  - pip
+  - python
+  - packaging
+  - fastai
+  - opencv-python
+  - torchvision
+  - fastkaggle
+test:
+  imports:
+  - fastaibreadcrumbs

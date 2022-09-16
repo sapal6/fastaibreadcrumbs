@@ -41,7 +41,7 @@ class Crappifier:
         self.angle = angle
         
     def __call__(self, f_src: Path):  
-        dest = self.path_crappy/f_src.relative_to(f_src.parent)
+        dest = self.path_crappy/f_src.relative_to(f_src.parents[1])
         dest.parent.mkdir(parents=True, exist_ok=True)
         img = cv2.imread(str(f_src))
         img = apply_motion_blur(img, self.sz, self.angle)
@@ -50,7 +50,7 @@ class Crappifier:
     _docs = dict(cls_doc="apply motion blur on images", 
              __call__="call the Crappifier on an image file")
 
-# %% ../00_core.ipynb 19
+# %% ../00_core.ipynb 20
 def show_plot(fn_first: Path, fn_second: Path, nrow:int, szs: tuple):
     """show two images side by side for given number of rows and figure size"""
     _, axs = plt.subplots(nrow, 2, figsize=szs)
@@ -62,14 +62,14 @@ def show_plot(fn_first: Path, fn_second: Path, nrow:int, szs: tuple):
     axs[0].imshow(img_first)
     axs[1].imshow(img_second)
 
-# %% ../00_core.ipynb 23
+# %% ../00_core.ipynb 24
 def crappify_imgs(path_hr:Path, path_crappy:Path, sz=30, angle:int=0, n_workers=2):
     'parallely crappify images'
     f = Crappifier(path_crappy, sz=sz, angle=angle)
     imgs_hr = get_image_files(path_hr)
     parallel(f, imgs_hr, n_workers=n_workers)
 
-# %% ../00_core.ipynb 27
+# %% ../00_core.ipynb 28
 def compare_imgs(origs:L, crappys:L, preds:L, szs: tuple, nrow:int=9, fontsz=100):
     """compare 3 images side by side for given number of rows and figure size"""
     if len(origs) == 1:
@@ -102,7 +102,7 @@ def compare_imgs(origs:L, crappys:L, preds:L, szs: tuple, nrow:int=9, fontsz=100
         pred = Image.open(pred)
         axs[i,2].imshow(pred)
 
-# %% ../00_core.ipynb 32
+# %% ../00_core.ipynb 33
 def get_unet_dls(bs:int,  source=None,
                   blocks: tuple=(ImageBlock, ImageBlock), dl_type=None, getters=None,
                   n_inp=None, get_items=None, get_y=None, get_x=None, splitter=None,
@@ -124,17 +124,17 @@ def get_unet_dls(bs:int,  source=None,
     
     return dls
 
-# %% ../00_core.ipynb 37
+# %% ../00_core.ipynb 38
 def gram_matrix(x):
     """function to calculate the gram matrix"""
     n,c,h,w = x.size()
     x = x.view(n, c, -1)
     return (x @ x.transpose(1,2))/(c*h*w)
 
-# %% ../00_core.ipynb 38
+# %% ../00_core.ipynb 39
 pixel_loss = F.l1_loss
 
-# %% ../00_core.ipynb 39
+# %% ../00_core.ipynb 40
 class FeatureLoss(Module):
     """Class to calculate feature loss"""
     def __init__(self, m_feat, layer_ids, layer_wgts):
@@ -164,7 +164,7 @@ class FeatureLoss(Module):
     
     def __del__(self): self.hooks.remove()
 
-# %% ../00_core.ipynb 45
+# %% ../00_core.ipynb 46
 def non_competition_nb_meta(user, id, title, file, dataset=None, private=True, gpu=False, internet=True):
     "Get the `dict` required for a kernel-metadata.json file"
     d = {
@@ -183,7 +183,7 @@ def non_competition_nb_meta(user, id, title, file, dataset=None, private=True, g
     if dataset: d["dataset_sources"] = [f"{user}/{dataset}"]
     return d
 
-# %% ../00_core.ipynb 48
+# %% ../00_core.ipynb 49
 def push_non_competition_notebook(user, id, title, file, path='.', dataset=None, private=True, gpu=False, internet=True):
     "Push notebook `file` to Kaggle Notebooks"
     meta = non_competition_nb_meta(user, id, title, file=file, dataset=dataset, private=private, gpu=gpu, internet=internet)
