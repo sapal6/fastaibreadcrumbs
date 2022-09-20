@@ -2,7 +2,8 @@
 
 # %% auto 0
 __all__ = ['pixel_loss', 'setup_data', 'apply_motion_blur', 'Crappifier', 'show_plot', 'crappify_imgs', 'compare_imgs',
-           'get_unet_dls', 'gram_matrix', 'FeatureLoss', 'non_competition_nb_meta', 'push_non_competition_notebook']
+           'get_unet_dls', 'gram_matrix', 'FeatureLoss', 'calc_ft_loss', 'save_preds', 'non_competition_nb_meta',
+           'push_non_competition_notebook']
 
 # %% ../00_core.ipynb 4
 import cv2
@@ -35,17 +36,18 @@ def apply_motion_blur(img, sz: int, angle: int):
 # %% ../00_core.ipynb 13
 @docs
 class Crappifier:
-    def __init__(self, path_crappy: Path, sz:int=30, angle:int=0):
-        self.path_crappy = path_crappy
+    def __init__(self, dest, sz:int=30, angle:int=0):
+        self.dest = dest
         self.sz = sz
         self.angle = angle
         
-    def __call__(self, f_src: Path):  
-        dest = self.path_crappy/f_src.relative_to(f_src.parents[1])
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        img = cv2.imread(str(f_src))
+    def __call__(self, file):  
+        dest = Path(self.dest)
+        dest_fname = dest/file
+        dest_fname.parent.mkdir(parents=True, exist_ok=True)
+        img = cv2.imread(str(file))
         img = apply_motion_blur(img, self.sz, self.angle)
-        cv2.imwrite(str(dest), img)
+        cv2.imwrite(str(dest_fname), img)
         
     _docs = dict(cls_doc="apply motion blur on images", 
              __call__="call the Crappifier on an image file")
@@ -164,7 +166,28 @@ class FeatureLoss(Module):
     
     def __del__(self): self.hooks.remove()
 
+# %% ../00_core.ipynb 43
+def calc_ft_loss(pretrained=True):
+    """calculate the feature loss using the given architecture"""
+    vgg_m = vgg16_bn(pretrained).features.cuda().eval()
+    vgg_m = vgg_m.requires_grad_(False)
+    blocks = [i-1 for i,o in enumerate(vgg_m.children()) if isinstance(o,nn.MaxPool2d)]
+    return FeatureLoss(vgg_m, blocks[2:5], [5,15,2])
+
 # %% ../00_core.ipynb 46
+def save_preds(dl, learn, dest):
+    "Save away predictions"
+    names = dl.dataset.items
+    gen_path = Path(dest)
+    gen_path.mkdir(exist_ok=True)
+  
+    preds,_ = learn.get_preds(dl=dl)
+    for i,pred in enumerate(preds):
+        dec = dl.after_batch.decode((TensorImage(pred[None]),))[0][0]
+        arr = dec.numpy().transpose(1,2,0).astype(np.uint8)
+        Image.fromarray(arr).save((gen_path)/names[i].name)
+
+# %% ../00_core.ipynb 49
 def non_competition_nb_meta(user, id, title, file, dataset=None, private=True, gpu=False, internet=True):
     "Get the `dict` required for a kernel-metadata.json file"
     d = {
@@ -183,7 +206,7 @@ def non_competition_nb_meta(user, id, title, file, dataset=None, private=True, g
     if dataset: d["dataset_sources"] = [f"{user}/{dataset}"]
     return d
 
-# %% ../00_core.ipynb 49
+# %% ../00_core.ipynb 52
 def push_non_competition_notebook(user, id, title, file, path='.', dataset=None, private=True, gpu=False, internet=True):
     "Push notebook `file` to Kaggle Notebooks"
     meta = non_competition_nb_meta(user, id, title, file=file, dataset=dataset, private=private, gpu=gpu, internet=internet)

@@ -1,9 +1,9 @@
 package:
   name: fastaibreadcrumbs
-  version: 0.0.8
+  version: 0.0.10
 source:
-  sha256: 6507070f6b4c0fd8e16f8b6033106532dbf012d407d94b6c07bbfffe3b82b76a
-  url: https://files.pythonhosted.org/packages/bc/36/22048a9be1c78a36eb785e71c92c9a5814da2e6ce63f121119ed40c1c7fe/fastaibreadcrumbs-0.0.8.tar.gz
+  sha256: dd75881e866a8384803cb93b8974cf8a96ac40108222f08a06decbfe2b0cab59
+  url: https://files.pythonhosted.org/packages/34/d6/2d427fa7f78e55787e4887b764263f6d0a1bbd6c70597f62b4ed75454627/fastaibreadcrumbs-0.0.10.tar.gz
 about:
   dev_url: https://sapal6.github.io
   doc_url: https://sapal6.github.io
