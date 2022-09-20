@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Fastaibreadcrumbs",
+    "section": "",
+    "text": "pip install fastaibreadcrumbs"
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "Fastaibreadcrumbs",
+    "section": "How to use",
+    "text": "How to use\nJust import “fastaibreadcrumbs” and get started.\nSome tiny convience functions are available which are handy while working on projects based on fastkaggle and/or fastai.\nA couple of examples are setup_data to setup kaggle data on your local machine and crappifier to create crappified version of image data. Explore the “fastaibreadcrumbs.core” page for more functions."
+  },
+  {
+    "objectID": "core.html",
+    "href": "core.html",
+    "title": "fastai-breadcrumbs.core",
+    "section": "",
+    "text": "source\n\n\n\n setup_data (user:str, dataset:str, install='')\n\nGet a path to data for the user's dataset, downloading it if needed\nThis function is similar to the setup_comp function in “fastkaggle” which will download the dataset from kaggle and unzip it to your local machine if it’s not there already. setup_data accepts the user name (which is the userid tagged to that dataset which you want to download) and the dataset name. You may also pass a library name to the install argument separated by space. Doing so will install the required libraries on your machine (by default it’s blank which means that no library needs to be installed).\nBe sure to have setup a kaggle API for your username and have the kaggle.json downloaded to youtr local machine before using this function.\nFor example when you do the following–>\nsetup_data('sapal6', 'superresolution')\nThe output would be\nPath('superresolution/busystreet')"
+  },
+  {
+    "objectID": "core.html#crappify-your-data",
+    "href": "core.html#crappify-your-data",
+    "title": "fastai-breadcrumbs.core",
+    "section": "Crappify your data",
+    "text": "Crappify your data\nSometimes we need to simulate motion blur. We can do this by using numpy to create a small window of a specific size which can be moved place above an image and then move it around the image and distort the pixels in a particular direction which in effect will simulate a camera shake in a particular direction. At the very basic level this “moving a window around and image and applyiung motion blur” is matrix multiplication for which we can use opencv’s affine transformations followed by getRotationMatrix2D.\n\nsource\n\napply_motion_blur\n\n apply_motion_blur (img, sz:int, angle:int)\n\napply motion blur in images at the givn angle and size of blur lines\napply_motion_blur is a lower level function which accepts an image (via img) and creates blur effect in that image as per the size of the blur (sz) which determines the strength of the blur and the angle in which the blur is to be applied.\nThe crappifier is the high level function that you would use to simulate motion blur for a single image.\n\nsource\n\n\nCrappifier\n\n Crappifier (dest, sz:int=30, angle:int=0)\n\napply motion blur on images\n\nsource\n\n\nCrappifier.__call__\n\n Crappifier.__call__ (file)\n\ncall the Crappifier on an image file\nGiven a file source (file) and the destination (dest) crappifier can create motion blur in the source image as per the size (sz) and the angle in which the blur needs to be applied.\n\nhr_path = Path('test/imgs')\ncrappy_path = Path('test/crappy')\nfiles_hr = get_image_files(hr_path)\n\n\nfiles_hr[0].parents[1]\n\nPath('test/imgs')\n\n\n\ncrappy_path/files_hr[0].relative_to(files_hr[0].parents[1])\n\nPath('test/crappy/test/test_img.jpg')\n\n\n\nCrappifier(crappy_path)(files_hr[0])\n\n\nsource\n\n\nshow_plot\n\n show_plot (fn_first:pathlib.Path, fn_second:pathlib.Path, nrow:int,\n            szs:tuple)\n\nshow two images side by side for given number of rows and figure size\n\nfiles_crappy = get_image_files(crappy_path)\n\n\nshow_plot(files_hr[0], files_crappy[0], 1, (10, 10))"
+  },
+  {
+    "objectID": "core.html#parallely-crappify-images",
+    "href": "core.html#parallely-crappify-images",
+    "title": "fastai-breadcrumbs.core",
+    "section": "Parallely crappify images",
+    "text": "Parallely crappify images\nWhen you need to crappify multiple images then save time by parallely crappifying images with crappify_imgs.\n\nsource\n\ncrappify_imgs\n\n crappify_imgs (path_hr:pathlib.Path, path_crappy:pathlib.Path, sz=30,\n                angle:int=0, n_workers=2)\n\nparallely crappify images\nProvide the path_hr for the source image and the path_crappy for destination, alongwith the sz for the strength of the blur and the angle of the blurs. n_workers will determine the number of cpus would be used.\n\ncrappify_imgs(hr_path, crappy_path, n_workers=8)"
+  },
+  {
+    "objectID": "core.html#compare-three-images-side-by-side",
+    "href": "core.html#compare-three-images-side-by-side",
+    "title": "fastai-breadcrumbs.core",
+    "section": "Compare three images side by side",
+    "text": "Compare three images side by side\nWhen you want to compare three images side by side then use compare_imgs. For example, you have a set of original images, crappified images, generated images and you want to compare them side by side.\n\nsource\n\ncompare_imgs\n\n compare_imgs (origs:fastcore.foundation.L, crappys:fastcore.foundation.L,\n               preds:fastcore.foundation.L, szs:tuple, nrow:int=9,\n               fontsz=100)\n\ncompare 3 images side by side for given number of rows and figure size\nProvide the origs list for the collection of the original images, crappys for the list of crappified images and the preds for the list of generated images. The plot sizes can be controlled with the szs tuple. The number of plots to be displayed can be controlled via nrow and the title size can be controlled by fontsz.\n\nfiles_gen = get_image_files(Path('test/generated'))\nfiles_gen\n\n(#1) [Path('test/generated/test/test_img.jpg')]\n\n\nFor example –>\ncompare_imgs(files_hr, files_crappy, files_gen, (64, 64))"
+  },
+  {
+    "objectID": "core.html#quickly-create-dataloader-for-unet",
+    "href": "core.html#quickly-create-dataloader-for-unet",
+    "title": "fastai-breadcrumbs.core",
+    "section": "Quickly create dataloader for Unet",
+    "text": "Quickly create dataloader for Unet\n\nsource\n\nget_unet_dls\n\n get_unet_dls (bs:int, source=None, blocks:tuple=(<function ImageBlock at\n               0x7fdfef76ba30>, <function ImageBlock at 0x7fdfef76ba30>),\n               dl_type=None, getters=None, n_inp=None, get_items=None,\n               get_y=None, get_x=None, splitter=None, item_tfms=None,\n               batch_tfms=None, **kwargs)\n\nfunction to create the datablock and the dataloader for Unet\nThis is a convenience function to setup a datablock and dataloader for a unet when the x and y blocks both are images. All the regular arguments which you pass to a regular fastai dataloader and dataset can be passed here.\n\nitem_tfms=Resize(128, method='squish')\nbatch_tfms=[*aug_transforms(size=64, min_scale=0.75), Normalize.from_stats(*imagenet_stats)]\ndls=get_unet_dls(1, get_image_files('test'), get_y=lambda x: Path('test')/x.relative_to(Path('test')),\n                  splitter=RandomSplitter(), item_tfms=item_tfms, batch_tfms=batch_tfms)\n\n\ndls.show_batch()"
+  },
+  {
+    "objectID": "core.html#calculate-feature-loss",
+    "href": "core.html#calculate-feature-loss",
+    "title": "fastai-breadcrumbs.core",
+    "section": "Calculate feature loss",
+    "text": "Calculate feature loss\n\nsource\n\ngram_matrix\n\n gram_matrix (x)\n\nfunction to calculate the gram matrix\n\nsource\n\n\nFeatureLoss\n\n FeatureLoss (m_feat, layer_ids, layer_wgts)\n\nClass to calculate feature loss\nFeature loss helps the network to compare the pixels of the target and the input image and check if the two images are the same.\nWe only need to pass the images through the netowrk once. So, we need to turn off the updates to the network weights. requires_grad_ is like asking the network “do not train”. We need to extract the features from our input image as well as the target image which we can compare later. To extract the features, we will use a simple pre-trained network like “vgg16”.\n\nsource\n\n\ncalc_ft_loss\n\n calc_ft_loss (pretrained=True)\n\ncalculate the feature loss using the given architecture\nThe features are grabbed just before the grid size changes and the maxpooling layer in network is where the grid size change occurs. We iterate over the different layers of the network (children) and then grabbing the layer just before the maxpool layer (i-1) as this is where the grid size changes"
+  },
+  {
+    "objectID": "core.html#saving-generated-images",
+    "href": "core.html#saving-generated-images",
+    "title": "fastai-breadcrumbs.core",
+    "section": "Saving generated images",
+    "text": "Saving generated images\nsave_preds iterates through the predicitons one by one and then converts the predictions into images. After that it saves the image into the destination path.\n\nsource\n\nsave_preds\n\n save_preds (dl, learn, dest)\n\nSave away predictions\nyou will need to pass the dataloader, learner and the destination respectively."
+  },
+  {
+    "objectID": "core.html#pushing-notebook-to-kaggle",
+    "href": "core.html#pushing-notebook-to-kaggle",
+    "title": "fastai-breadcrumbs.core",
+    "section": "Pushing notebook to kaggle",
+    "text": "Pushing notebook to kaggle\n“fastkaggle” povides a way to push notebooks to kaggle from your local machine but this function deals with notebooks meant for competitions only and as such it takes care of data sources meant for a competition. For ceratin use case we need the ability to attach non-competition data sources to our kaggle notebook.\n\nsource\n\nnon_competition_nb_meta\n\n non_competition_nb_meta (user, id, title, file, dataset=None,\n                          private=True, gpu=False, internet=True)\n\nGet the dict required for a kernel-metadata.json file\n\nnon_competition_nb_meta('sapal6', 'my-notebook', 'My notebook', 'my-notebook.ipynb', dataset='some_data')\n\n{'id': 'sapal6/my-notebook',\n 'title': 'My notebook',\n 'code_file': 'my-notebook.ipynb',\n 'language': 'python',\n 'kernel_type': 'notebook',\n 'is_private': True,\n 'enable_gpu': False,\n 'enable_internet': True,\n 'keywords': [],\n 'dataset_sources': ['sapal6/some_data'],\n 'kernel_sources': []}\n\n\n\nimport json\nfrom pathlib import Path\n\n\nsource\n\n\npush_non_competition_notebook\n\n push_non_competition_notebook (user, id, title, file, path='.',\n                                dataset=None, private=True, gpu=False,\n                                internet=True)\n\nPush notebook file to Kaggle Notebooks"
+  }
+]
